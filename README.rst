@@ -62,8 +62,8 @@ coordinate system.
     x=410830.5412685075, y=5045093.805781859
     The UTM SRID is: 32615
 
-For more examples and other information, visit the [documentation
-page]((https://readthedocs.org/projects/shapeit/).
+For more examples and other information, visit the `documentation
+page <https://shapeit.readthedocs.io/en/latest/>`__.
 
 Development Prerequisites
 -------------------------

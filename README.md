@@ -44,7 +44,7 @@ The UTM SRID is: 32615
 ```
 
 
-For more examples and other information, visit the [documentation page]((https://readthedocs.org/projects/shapeit/).
+For more examples and other information, visit the [documentation page](https://shapeit.readthedocs.io/en/latest/).
 
 
 
