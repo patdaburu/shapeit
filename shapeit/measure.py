@@ -85,7 +85,7 @@ def convert(
             else math.pow(n, (1.0/float(dimension)))  # nth root
         ),
         units=units,
-        dimension=dimension
+        dimension=1  # We've already reduced `n` to one dimension.
     )
     # Convert the 1-dimensional length in meters to its equivalent in the
     # target units.
