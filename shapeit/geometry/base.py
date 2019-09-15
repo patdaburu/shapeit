@@ -460,6 +460,27 @@ class SrPolyline(SrGeometry):
             sr_=self._sr
         )
 
+    @lru_cache(maxsize=2)
+    def length(
+            self,
+            units: Units = Units.METERS
+    ) -> float:
+        """
+        Get the length of the polyline in the specified units.
+
+        :param units: the units in which the length should be expressed
+        :return: the length
+        """
+        # Get the geometry in a UTM coordinate system.
+        _utm = self.as_utm()
+        # Now that it's in a coordinate system measured in meters, we can
+        # return the length with confidence.
+        return convert(
+            n=_utm.base_geometry.length,
+            units=Units.METERS,
+            to=units
+        )
+
 
 SrLinestring = SrPolyline  #: This is an alias for :py:class:`SrPolyline`
 
