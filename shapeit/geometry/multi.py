@@ -8,3 +8,6 @@
 
 This module contains multipart geometry objects.
 """
+
+# from shapely.geometry import MultiPoint, MultiLineString, MultiPolygon
+# from shapely.geometry.base import BaseGeometry, BaseMultipartGeometry

@@ -9,7 +9,6 @@
 Geometries start here.
 """
 import copy
-from functools import lru_cache
 import hashlib
 from typing import Any, Dict, Mapping, Union
 from shapely.geometry import mapping, LineString, Point, Polygon, shape
@@ -164,7 +163,6 @@ class SrGeometry(Exportable):
             sr_=_sr
         )
 
-    @lru_cache(maxsize=1)
     def buffer(
             self,
             n: int or float,
@@ -407,7 +405,6 @@ class SrPolygon(SrGeometry):
         """
         return self._base_geometry
 
-    @lru_cache(maxsize=2)
     def area(
             self,
             units: Units = Units.METERS
@@ -460,7 +457,6 @@ class SrPolyline(SrGeometry):
             sr_=self._sr
         )
 
-    @lru_cache(maxsize=2)
     def length(
             self,
             units: Units = Units.METERS
