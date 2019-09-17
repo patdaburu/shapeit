@@ -8,11 +8,9 @@
 
 This module contains multipart geometry objects.
 """
-from typing import Any, Dict, Mapping, Union
-from shapely.geometry import MultiPoint, MultiLineString, MultiPolygon
-from shapely.geometry.base import BaseGeometry, BaseMultipartGeometry
+from typing import Mapping, Union
+from shapely.geometry import MultiLineString, MultiPolygon
 from .base import SrGeometry1D, SrGeometry2D
-from ..measure import convert, Units
 from ..sr import Sr, WGS_84
 
 
