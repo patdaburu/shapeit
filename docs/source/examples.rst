@@ -12,3 +12,4 @@ Examples
 
    examples/wgs84_to_utm
    examples/wgs84_buffer
+   examples/sr_shape

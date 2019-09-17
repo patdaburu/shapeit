@@ -8,8 +8,8 @@
 
 Geometries start here.
 """
+from abc import ABC
 import copy
-from functools import lru_cache
 import hashlib
 from typing import Any, Dict, Mapping, Union
 from shapely.geometry import mapping, LineString, Point, Polygon, shape
@@ -164,7 +164,6 @@ class SrGeometry(Exportable):
             sr_=_sr
         )
 
-    @lru_cache(maxsize=1)
     def buffer(
             self,
             n: int or float,
@@ -303,6 +302,67 @@ class SrGeometry(Exportable):
         )
 
 
+class SrGeometry1D(SrGeometry, ABC):
+    """
+    Extend this class to implement `SrGeometry` subclasses that represent
+    1-dimensional geometries.
+
+    .. seealso::
+
+        :py:class:`SrPolyline`
+    """
+
+    def length(
+            self,
+            units: Units = Units.METERS
+    ) -> float:
+        """
+        Get the length of the polyline in the specified units.
+
+        :param units: the units in which the length should be expressed
+        :return: the length
+        """
+        # Get the geometry in a UTM coordinate system.
+        _utm = self.as_utm()
+        # Now that it's in a coordinate system measured in meters, we can
+        # return the length with confidence.
+        return convert(
+            n=_utm.base_geometry.length,
+            units=Units.METERS,
+            to=units
+        )
+
+
+class SrGeometry2D(SrGeometry, ABC):
+    """
+    Extend this class to implement `SrGeometry` subclasses that represent
+    2-dimensional geometries.
+
+    .. seealso::
+
+        :py:class:`SrPolygon`
+    """
+    def area(
+            self,
+            units: Units = Units.METERS
+    ) -> float:
+        """
+        Get the area of the polygon in the specified units (squared).
+
+        :param units: the units in which the area should be expressed
+        :return: the area
+        """
+        # Get the geometry in a UTM coordinate system.
+        _utm = self.as_utm()
+        # Now that it's in a coordinate system measured in meters, we can
+        # return the area with confidence.
+        return convert(
+            n=_utm.base_geometry.area,
+            units=Units.METERS,
+            to=units
+        )
+
+
 class SrPoint(SrGeometry):
     """
     A spatially referenced point geometry.
@@ -389,7 +449,7 @@ class SrPoint(SrGeometry):
         )
 
 
-class SrPolygon(SrGeometry):
+class SrPolygon(SrGeometry2D):
     """
     A spatially referenced polygon geometry.
     """
@@ -407,29 +467,8 @@ class SrPolygon(SrGeometry):
         """
         return self._base_geometry
 
-    @lru_cache(maxsize=2)
-    def area(
-            self,
-            units: Units = Units.METERS
-    ) -> float:
-        """
-        Get the area of the polygon in the specified units (squared).
 
-        :param units: the units in which the area should be expressed
-        :return: the area
-        """
-        # Get the geometry in a UTM coordinate system.
-        _utm = self.as_utm()
-        # Now that it's in a coordinate system measured in meters, we can
-        # return the area with confidence.
-        return convert(
-            n=_utm.base_geometry.area,
-            units=Units.METERS,
-            to=units
-        )
-
-
-class SrPolyline(SrGeometry):
+class SrPolyline(SrGeometry1D):
     """
     A spatially referenced polyline geometry.
     """
@@ -441,9 +480,9 @@ class SrPolyline(SrGeometry):
         super().__init__(base_geometry=base_geometry, sr_=sr_)
 
     @property
-    def polyline(self) -> LineString:
+    def linestring(self) -> LineString:
         """
-        Get the base geometry as a `shapely.geometry.Polygon`.
+        Get the base geometry as a `shapely.geometry.LineString`.
         """
         return self._base_geometry
 
@@ -458,27 +497,6 @@ class SrPolyline(SrGeometry):
         return SrPoint(
             base_geometry=self.base_geometry.interpolate(0.5, normalized=True),
             sr_=self._sr
-        )
-
-    @lru_cache(maxsize=2)
-    def length(
-            self,
-            units: Units = Units.METERS
-    ) -> float:
-        """
-        Get the length of the polyline in the specified units.
-
-        :param units: the units in which the length should be expressed
-        :return: the length
-        """
-        # Get the geometry in a UTM coordinate system.
-        _utm = self.as_utm()
-        # Now that it's in a coordinate system measured in meters, we can
-        # return the length with confidence.
-        return convert(
-            n=_utm.base_geometry.length,
-            units=Units.METERS,
-            to=units
         )
 
 

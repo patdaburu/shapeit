@@ -43,7 +43,8 @@ release = shapeit.__release__
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages'
+    'sphinx.ext.githubpages',
+    'sphinx.ext.todo'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -53,6 +54,10 @@ templates_path = ['_templates']
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
+
+# Enable todos.
+todo_include_todos = True
+todo_link_only = True
 
 
 # -- Options for HTML output -------------------------------------------------
