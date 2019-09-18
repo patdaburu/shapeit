@@ -27,7 +27,7 @@ def test_sr_shape(base_geometry, sr, sr_geom_type):
     """
     sr_geom = sr_shape(
         base_geometry=base_geometry,
-        sr_=sr
+        sr=sr
     )
     assert type(sr_geom) == sr_geom_type
     srid = sr.srid if isinstance(sr, Sr) else sr

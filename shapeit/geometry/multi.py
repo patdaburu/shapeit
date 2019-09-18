@@ -21,9 +21,9 @@ class SrMultiPolygon(SrGeometry2D):
     def __init__(
             self,
             base_geometry: Union[MultiPolygon, Mapping],
-            sr_: Sr = WGS_84
+            sr: Sr = WGS_84
     ):
-        super().__init__(base_geometry=base_geometry, sr_=sr_)
+        super().__init__(base_geometry=base_geometry, sr=sr)
 
     @property
     def multipolygon(self) -> MultiPolygon:
@@ -40,9 +40,9 @@ class SrMultiPolyline(SrGeometry1D):
     def __init__(
             self,
             base_geometry: Union[MultiLineString, Mapping],
-            sr_: Sr = WGS_84
+            sr: Sr = WGS_84
     ):
-        super().__init__(base_geometry=base_geometry, sr_=sr_)
+        super().__init__(base_geometry=base_geometry, sr=sr)
 
     @property
     def multilinestring(self) -> MultiLineString:

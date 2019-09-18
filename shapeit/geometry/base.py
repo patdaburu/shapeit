@@ -32,7 +32,7 @@ class SrGeometry(Exportable):
     def __init__(
             self,
             base_geometry: Union[BaseGeometry, BaseMultipartGeometry, Mapping],
-            sr_: Sr = WGS_84
+            sr: Sr = WGS_84
     ):
         # The base geometry we store is the one passed in at the constructor
         # unless the caller passed us a `Mapping` that isn't a base geometry.
@@ -44,7 +44,7 @@ class SrGeometry(Exportable):
             )
             else shape(base_geometry)
         )  #: the base (Shapely) geometry
-        self._sr = sr_  #: the spatial reference (SR)
+        self._sr = sr  #: the spatial reference (SR)
         # We'll generate the object hash if and when it's requested.
         self.hash_: int or None = None
 
@@ -78,7 +78,7 @@ class SrGeometry(Exportable):
         """
         return SrPoint(
             base_geometry=self.base_geometry.representative_point,
-            sr_=self._sr
+            sr=self._sr
         )
 
     def mapping(self) -> Mapping[str, Any]:
@@ -161,7 +161,7 @@ class SrGeometry(Exportable):
         # the spatial reference the caller supplied.
         return sr_shape(
             base_geometry=transformed_geometry,
-            sr_=_sr
+            sr=_sr
         )
 
     def buffer(
@@ -190,7 +190,7 @@ class SrGeometry(Exportable):
         # UTM spatial reference.
         sr_geom_buf = SrPolygon(
             base_geometry=base_utm_buf,
-            sr_=base_utm.sr
+            sr=base_utm.sr
         )
         # Transform the buffered polygon to the original coordinate system
         # and return it.
@@ -205,7 +205,7 @@ class SrGeometry(Exportable):
         return {
             '__type__': pyfqn(self),
             'base_geometry': mapping(self._base_geometry),
-            'sr_': self._sr._asdict()
+            'sr': self._sr._asdict()
         }
 
     @classmethod
@@ -228,7 +228,7 @@ class SrGeometry(Exportable):
         return _cls(
             **{
                 'base_geometry': shape(data.get('base_geometry')),
-                'sr_': Sr(**data.get('sr_'))
+                'sr': Sr(**data.get('sr'))
             }
         )
 
@@ -249,7 +249,7 @@ class SrGeometry(Exportable):
     def __copy__(self):
         return self.__class__(
             base_geometry=copy.deepcopy(self._base_geometry),
-            sr_=self._sr
+            sr=self._sr
         )
 
     def __getstate__(self):
@@ -290,14 +290,14 @@ class SrGeometry(Exportable):
         return (
             f"{self.__class__.__name__}("
             f"base_geometry={repr(self.mapping())}, "
-            f"sr_={repr(self._sr)})"
+            f"sr={repr(self._sr)})"
         )
 
     def __str__(self):
         return (
             f"{self.__class__.__name__}("
             f"base_geometry={self.mapping()}, "
-            f"sr_={repr(self._sr)}"
+            f"sr={repr(self._sr)}"
             f")"
         )
 
@@ -370,9 +370,9 @@ class SrPoint(SrGeometry):
     def __init__(
             self,
             base_geometry: Union[Point, Mapping],
-            sr_: Sr = WGS_84
+            sr: Sr = WGS_84
     ):
-        super().__init__(base_geometry=base_geometry, sr_=sr_)
+        super().__init__(base_geometry=base_geometry, sr=sr)
 
     @property
     def point(self) -> Point:
@@ -421,7 +421,7 @@ class SrPoint(SrGeometry):
         base_geometry = Point(lon, lat)
         return SrPoint(
             base_geometry=base_geometry,
-            sr_=WGS_84
+            sr=WGS_84
         )
 
     @classmethod
@@ -445,7 +445,7 @@ class SrPoint(SrGeometry):
         # Create and return the point.
         return SrPoint(
             base_geometry=base_geometry,
-            sr_=sr if isinstance(sr, Sr) else Sr(srid=sr)
+            sr=sr if isinstance(sr, Sr) else Sr(srid=sr)
         )
 
 
@@ -456,9 +456,9 @@ class SrPolygon(SrGeometry2D):
     def __init__(
             self,
             base_geometry: Union[Polygon, Mapping],
-            sr_: Sr = WGS_84
+            sr: Sr = WGS_84
     ):
-        super().__init__(base_geometry=base_geometry, sr_=sr_)
+        super().__init__(base_geometry=base_geometry, sr=sr)
 
     @property
     def polygon(self) -> Polygon:
@@ -475,9 +475,9 @@ class SrPolyline(SrGeometry1D):
     def __init__(
             self,
             base_geometry: Union[LineString, Mapping],
-            sr_: Sr = WGS_84
+            sr: Sr = WGS_84
     ):
-        super().__init__(base_geometry=base_geometry, sr_=sr_)
+        super().__init__(base_geometry=base_geometry, sr=sr)
 
     @property
     def linestring(self) -> LineString:
@@ -496,7 +496,7 @@ class SrPolyline(SrGeometry1D):
         # Return the point in the center of the line.
         return SrPoint(
             base_geometry=self.base_geometry.interpolate(0.5, normalized=True),
-            sr_=self._sr
+            sr=self._sr
         )
 
 
@@ -508,13 +508,13 @@ _geometry_type_map: Dict[type, type] = {}
 
 def sr_shape(
         base_geometry: Union[BaseGeometry, BaseMultipartGeometry, Mapping],
-        sr_: Sr or int = WGS_84
+        sr: Sr or int = WGS_84
 ) -> Union[SrGeometry, SrPoint, SrPolyline, SrPolygon]:
     """
     Create a :py:class:`SrGeometry` from a `Shapely` geometry (or mapping).
 
     :param base_geometry: the base geometry (or mapping)
-    :param sr_: the spatial reference
+    :param sr: the spatial reference
     :return: the :py:class:`SrGeometry`
 
     .. note::
@@ -545,5 +545,5 @@ def sr_shape(
     # Instantiate the class.
     return sr_geom_cls(
         base_geometry=_base_geometry,
-        sr_=sr_ if isinstance(sr_, Sr) else by_srid(sr_)
+        sr=sr if isinstance(sr, Sr) else by_srid(sr)
     )
