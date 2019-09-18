@@ -508,7 +508,7 @@ _geometry_type_map: Dict[type, type] = {}
 
 def sr_shape(
         base_geometry: Union[BaseGeometry, BaseMultipartGeometry, Mapping],
-        sr_: Sr = WGS_84
+        sr_: Sr or int = WGS_84
 ) -> Union[SrGeometry, SrPoint, SrPolyline, SrPolygon]:
     """
     Create a :py:class:`SrGeometry` from a `Shapely` geometry (or mapping).
@@ -545,5 +545,5 @@ def sr_shape(
     # Instantiate the class.
     return sr_geom_cls(
         base_geometry=_base_geometry,
-        sr_=sr_
+        sr_=sr_ if isinstance(sr_, Sr) else by_srid(sr_)
     )

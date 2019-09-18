@@ -62,7 +62,6 @@ class Sr(NamedTuple):
                 )
 
 
-
 class LatLon(NamedTuple):
     """
     Represents a latitude/longitude pair.
