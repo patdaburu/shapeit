@@ -8,5 +8,5 @@
 It's Shapely with projections and some other conveniences!
 """
 from .geometry import sr_shape, SrGeometry, SrPoint, SrPolyline, SrPolygon
-from .sr import WGS_84, InvalidSrException
+from .srs import WGS_84, InvalidSrException
 from .version import __version__, __release__

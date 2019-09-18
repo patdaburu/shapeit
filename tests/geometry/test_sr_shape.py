@@ -3,7 +3,7 @@
 import pytest
 from shapely.geometry import Point, LineString, Polygon
 from shapeit import sr_shape, SrPoint, SrPolyline, SrPolygon
-from shapeit.sr import Sr
+from shapeit.srs import Sr
 
 
 @pytest.mark.parametrize(

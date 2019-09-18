@@ -16,7 +16,7 @@ from shapely.geometry import mapping, LineString, Point, Polygon, shape
 from shapely.geometry.base import BaseGeometry, BaseMultipartGeometry
 from shapely.ops import transform
 from ..measure import convert, meters, Units
-from ..sr import by_srid, Sr, WGS_84, utm, transform_fn
+from ..srs import by_srid, Sr, WGS_84, utm, transform_fn
 from ..types import pycls, pyfqn
 from ..xchg import Exportable
 

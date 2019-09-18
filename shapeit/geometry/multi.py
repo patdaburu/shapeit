@@ -11,7 +11,7 @@ This module contains multipart geometry objects.
 from typing import Mapping, Union
 from shapely.geometry import MultiLineString, MultiPolygon
 from .base import SrGeometry1D, SrGeometry2D
-from ..sr import Sr, WGS_84
+from ..srs import Sr, WGS_84
 
 
 class SrMultiPolygon(SrGeometry2D):

@@ -30,10 +30,10 @@ shapeit.measure
     :undoc-members:
     :show-inheritance:
 
-shapeit.sr
-^^^^^^^^^^
+shapeit.srs
+^^^^^^^^^^^
 
-.. automodule:: shapeit.sr
+.. automodule:: shapeit.srs
     :members:
     :undoc-members:
     :show-inheritance:
