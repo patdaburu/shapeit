@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import pytest
-from shapeit.sr import by_srid, InvalidSrException
+from shapeit.srs import by_srid, InvalidSrException
 
 
 @pytest.mark.parametrize(
