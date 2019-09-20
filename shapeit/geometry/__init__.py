@@ -12,7 +12,11 @@ from .base import (
     sr_shape,
     SrGeometry,
     SrPoint,
-    SrLinestring,
     SrPolygon,
     SrPolyline
+)
+from .multi import (
+    SrMultiPoint,
+    SrMultiPolyline,
+    SrMultiPolygon
 )

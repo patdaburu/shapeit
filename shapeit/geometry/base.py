@@ -503,7 +503,21 @@ class SrPolyline(SrGeometry1D):
 SrLinestring = SrPolyline  #: This is an alias for :py:class:`SrPolyline`
 
 #: a mapping of Shapely geometry types to SrGeometry types
-_geometry_type_map: Dict[type, type] = {}
+_geometry_type_map: Dict[type, type] = {
+    Point: SrPoint,
+    LineString: SrPolyline,
+    Polygon: SrPolygon
+}
+
+
+def update_geometry_type_map(shapely: type, shapeit: type):
+    """
+    Update the geometry type map.
+
+    :param shapely: the `Shapely` `BaseGeometry` type
+    :param shapeit: the `shapeit` :py:class:`SrGeometry` type
+    """
+    _geometry_type_map[shapely] = shapeit
 
 
 def sr_shape(
@@ -522,14 +536,6 @@ def sr_shape(
         The returned depends on the type of `Shapely` base geometry the
         `base_geometry` parameter describes.
     """
-    # If the type map hasn't been initialized, do so now...
-    if not _geometry_type_map:
-        for sstype, srtype in {
-                Point: SrPoint,
-                LineString: SrPolyline,
-                Polygon: SrPolygon
-        }.items():
-            _geometry_type_map[sstype] = srtype
     # Create the Shapely base geometry.
     _base_geometry = (
         base_geometry if isinstance(

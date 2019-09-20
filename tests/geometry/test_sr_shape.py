@@ -1,8 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import pytest
-from shapely.geometry import Point, LineString, Polygon
-from shapeit import sr_shape, SrPoint, SrPolyline, SrPolygon
+from shapely.geometry import (
+    Point,
+    LineString,
+    Polygon,
+    MultiPoint,
+    MultiLineString,
+    MultiPolygon
+)
+from shapeit import (
+    sr_shape,
+    SrPoint,
+    SrPolyline,
+    SrPolygon,
+    SrMultiPoint,
+    SrMultiPolyline,
+    SrMultiPolygon
+)
 from shapeit.srs import Sr
 
 
@@ -12,7 +27,22 @@ from shapeit.srs import Sr
         (Point(0.0, 0.0), 4326, SrPoint),
         (Point(0.0, 0.0), 3857, SrPoint),
         (LineString([(0, 0), (1, 1)]), 3857, SrPolyline),
-        (Polygon([(0, 0), (1, 1), (1, 0)]), 32619, SrPolygon)
+        (Polygon([(0, 0), (1, 1), (1, 0)]), 32619, SrPolygon),
+        (
+            MultiPoint([(0, 0), (1, 1), (0, 2), (2, 2), (3, 1), (1, 0)]),
+            3857,
+            SrMultiPoint
+        ),
+        (
+            MultiLineString([((0, 0), (1, 1)), ((-1, 0), (1, 0))]),
+            3857,
+            SrMultiPolyline
+        ),
+        (
+            MultiPolygon([Point(i, 0).buffer(0.7) for i in range(5)]),
+            3857,
+            SrMultiPolygon
+        )
     ]
 )
 def test_sr_shape(base_geometry, sr, sr_geom_type):
