@@ -33,5 +33,8 @@ The function will determine the best `SrGeometry` type by inspecting the Shapely
 .. seealso::
 
     * :py:class:`SrPoint <shapeit.geometry.base.SrPoint>`
+    * :py:class:`SrMultiPoint <shapeit.geometry.multi.SrMultiPoint>`
     * :py:class:`SrPolyline <shapeit.geometry.base.SrPolyline>`
-    * :py:class:`SrPolyline <shapeit.geometry.base.SrPolygon>`
+    * :py:class:`SrMultiPolyline <shapeit.geometry.multi.SrMultiPolyline>`
+    * :py:class:`SrPolygon <shapeit.geometry.base.SrPolygon>`
+    * :py:class:`SrMultiPolygon <shapeit.geometry.multi.SrMultiPolygon>`

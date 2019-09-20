@@ -14,6 +14,14 @@ shapeit.geometry.base
     :undoc-members:
     :show-inheritance:
 
+shapeit.geometry.multi
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: shapeit.geometry.multi
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 shapeit.errors
 ^^^^^^^^^^^^^^
 
