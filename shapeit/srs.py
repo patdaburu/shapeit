@@ -28,11 +28,28 @@ class InvalidSrException(ShapeitException):
     """
 
 
+class UnsupportedMetricProjectionException(ShapeitException):
+    """
+    Raised in response to attempts to use a
+    :py:class:`metric projection <MetricProjections>`_ in a context that
+    doesn't support it.
+    """
+
+
 class Authorities(Enum):
     """
     Spatial Reference Authorities
     """
     EPSG = 'epsg'  #: European Petroleum Survey Group
+
+
+class MetricProjections(Enum):
+    """
+    Well-known standard projections that use meters for linear measurement.
+    """
+    UTM = 'utm'  #: indicates one of the UTM coordinate systems
+    US_NAEA = 'us_naea'  #: US National Atlas Equal Area
+    WEB_MERCATOR = 'web_mercator'  #: WGS-84 Pseudo Mercator (Web Mercator)
 
 
 class Sr(NamedTuple):
@@ -74,6 +91,11 @@ WGS_84 = Sr(
     srid=4326,
     authority=Authorities.EPSG.value
 )  #: the WGS-84 spatial reference
+
+WEB_MERCATOR = Sr(
+    srid=3857,
+    authority=Authorities.EPSG.value
+)  #: the WGS-84 Pseudo-Mercator spatial reference
 
 US_NAEA = Sr(
     srid=2163,
