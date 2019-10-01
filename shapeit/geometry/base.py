@@ -30,6 +30,9 @@ from ..srs import (
 from ..types import pycls, pyfqn
 from ..xchg import Exportable
 
+#: the preferred metric projection
+PREFERRED_METRIC_PROJECTION: MetricProjections = MetricProjections.WEB_MERCATOR
+
 
 class SrGeometry(Exportable):
     """
@@ -191,7 +194,7 @@ class SrGeometry(Exportable):
 
     def as_metric(
             self,
-            metric_projection: MetricProjections = MetricProjections.US_NAEA
+            metric_projection: MetricProjections = None
     ):
         """
         Get this geometry in one of the defined metric projections.
@@ -202,11 +205,15 @@ class SrGeometry(Exportable):
         :raises UnsupportedMetricProjectionException: if the `metric_projection`
             argument is not supported
         """
-        if metric_projection == MetricProjections.US_NAEA:
+        _mp = (
+            metric_projection if metric_projection is not None
+            else PREFERRED_METRIC_PROJECTION
+        )
+        if _mp == MetricProjections.US_NAEA:
             return self.as_usm()
-        if metric_projection == MetricProjections.UTM:
+        if _mp == MetricProjections.UTM:
             return self.as_utm()
-        elif metric_projection == MetricProjections.WEB_MERCATOR:
+        elif _mp == MetricProjections.WEB_MERCATOR:
             return self.as_wm()
         # This shouldn't happen unless we introduce a new standard metric
         # projection without updating this method, but...
@@ -245,9 +252,7 @@ class SrGeometry(Exportable):
             n: int or float,
             units: Units = Units.METERS,
             resolution: int = 64,
-            metric_projection: MetricProjections = (
-                MetricProjections.WEB_MERCATOR
-            )
+            metric_projection: MetricProjections = None
     ) -> 'SrPolygon':
         """
         Buffer the geometry by `n` meters.
@@ -395,9 +400,7 @@ class SrGeometry1D(SrGeometry, ABC):
     def length(
             self,
             units: Units = Units.METERS,
-            metric_projection: MetricProjections = (
-                MetricProjections.WEB_MERCATOR
-            )
+            metric_projection: MetricProjections = None
     ) -> float:
         """
         Get the length of the polyline in the specified units.
@@ -429,9 +432,7 @@ class SrGeometry2D(SrGeometry, ABC):
     def area(
             self,
             units: Units = Units.METERS,
-            metric_projection: MetricProjections = (
-                MetricProjections.WEB_MERCATOR
-            )
+            metric_projection: MetricProjections = None
     ) -> float:
         """
         Get the area of the polygon in the specified units (squared).
