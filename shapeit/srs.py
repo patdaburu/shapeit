@@ -75,6 +75,11 @@ WGS_84 = Sr(
     authority=Authorities.EPSG.value
 )  #: the WGS-84 spatial reference
 
+US_NAEA = Sr(
+    srid=2163,
+    authority=Authorities.EPSG.value
+)  #: US National Atlas Equal Area
+
 #: a mapping of `Sr` objects indexed by srid (`int`) and authority (`str`)
 _sr_cache: Dict[Tuple[int, str], Sr] = {}
 
