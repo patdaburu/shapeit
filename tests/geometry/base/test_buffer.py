@@ -14,6 +14,20 @@ from shapeit import SrPoint, MetricProjections
             MetricProjections.WEB_MERCATOR,
             78.5397
         ),
+        (
+            SrPoint.from_lat_lon(lat=45.553670, lon=-94.142430),
+            5,
+            1000,
+            MetricProjections.UTM,
+            78.5397
+        ),
+        (
+            SrPoint.from_lat_lon(lat=45.553670, lon=-94.142430),
+            5,
+            1000,
+            MetricProjections.US_NAEA,
+            78.5397
+        ),
     ]
 )
 def test_buffer_area(geometry, radius, resolution, metric_projection, area_m):
