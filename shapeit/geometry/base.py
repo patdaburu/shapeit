@@ -245,7 +245,9 @@ class SrGeometry(Exportable):
             n: int or float,
             units: Units = Units.METERS,
             resolution: int = 64,
-            metric_projection: MetricProjections = MetricProjections.UTM
+            metric_projection: MetricProjections = (
+                MetricProjections.WEB_MERCATOR
+            )
     ) -> 'SrPolygon':
         """
         Buffer the geometry by `n` meters.
@@ -393,13 +395,15 @@ class SrGeometry1D(SrGeometry, ABC):
     def length(
             self,
             units: Units = Units.METERS,
-            metric_projection: MetricProjections = MetricProjections.UTM
+            metric_projection: MetricProjections = (
+                MetricProjections.WEB_MERCATOR
+            )
     ) -> float:
         """
         Get the length of the polyline in the specified units.
 
         :param units: the units in which the length should be expressed
-        :param metric_projection: the preferred metric projection to use
+        :param metric_projection: the preferred metric projection
         :return: the length
         """
         # Get the geometry in a UTM coordinate system.
@@ -424,16 +428,20 @@ class SrGeometry2D(SrGeometry, ABC):
     """
     def area(
             self,
-            units: Units = Units.METERS
+            units: Units = Units.METERS,
+            metric_projection: MetricProjections = (
+                MetricProjections.WEB_MERCATOR
+            )
     ) -> float:
         """
         Get the area of the polygon in the specified units (squared).
 
         :param units: the units in which the area should be expressed
+        :param metric_projection: the preferred metric projection
         :return: the area
         """
         # Get the geometry in a UTM coordinate system.
-        _utm = self.as_utm()
+        _utm = self.as_metric(metric_projection)
         # Now that it's in a coordinate system measured in meters, we can
         # return the area with confidence.
         return convert(

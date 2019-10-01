@@ -17,5 +17,11 @@ from .geometry import (
     SrMultiPolyline,
     SrMultiPolygon
 )
-from .srs import WGS_84, InvalidSrException
+from .srs import (
+    InvalidSrException,
+    MetricProjections,
+    UnsupportedMetricProjectionException,
+    WEB_MERCATOR,
+    WGS_84
+)
 from .version import __version__, __release__
