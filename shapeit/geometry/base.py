@@ -16,9 +16,22 @@ from shapely.geometry import mapping, LineString, Point, Polygon, shape
 from shapely.geometry.base import BaseGeometry, BaseMultipartGeometry
 from shapely.ops import transform
 from ..measure import convert, meters, Units
-from ..srs import by_srid, Sr, WGS_84, utm, transform_fn
+from ..srs import (
+    by_srid,
+    MetricProjections,
+    Sr,
+    utm,
+    transform_fn,
+    UnsupportedMetricProjectionException,
+    US_NAEA,
+    WEB_MERCATOR,
+    WGS_84
+)
 from ..types import pycls, pyfqn
 from ..xchg import Exportable
+
+#: the preferred metric projection
+PREFERRED_METRIC_PROJECTION: MetricProjections = MetricProjections.WEB_MERCATOR
 
 
 class SrGeometry(Exportable):
@@ -103,11 +116,11 @@ class SrGeometry(Exportable):
         """
         if self._sr == WGS_84:
             return self
-        return self.transform(sr_=WGS_84)
+        return self.transform(sr=WGS_84)
 
     def as_utm(self) -> 'SrGeometry':
         """
-        Get this geometry as a UTM geometry.
+        Get this geometry in the regional UTM projection.
 
         :return:  an equivalent geometry in a UTM coordinate system (or the
             original object if it is already in a UTM coordinate system)
@@ -124,7 +137,7 @@ class SrGeometry(Exportable):
             rp: Point = self.base_geometry.representative_point()
         else:
             # Otherwise, we need to transform it to WGS-84...
-            wgs84_geom = self.transform(sr_=WGS_84)
+            wgs84_geom = self.transform(sr=WGS_84)
             # ...so that we can get a representative point defined by a
             # latitude and a longitude.
             rp: Point = wgs84_geom.base_geometry.representative_point()
@@ -134,20 +147,90 @@ class SrGeometry(Exportable):
         if utm_sr == self._sr:
             return self
         # Transform this geometry's base geometry to the UTM zone.
-        return self.transform(sr_=utm_sr)
+        return self.transform(sr=utm_sr)
 
-    def transform(self, sr_: Sr or int) -> 'SrGeometry':
+    def as_usm(self) -> 'SrGeometry':
+        """
+        Get this geometry in the
+        `US National Atlas <https://georepository.com/crs_2163/US-National-Atlas-Equal-Area.html>`_
+        coordinate system.
+
+        :return:  an equivalent geometry in a US National Atlas coordinate
+            system (or the original object if it is already in the US National
+            Atlas coordinate system)
+
+        .. note::
+
+            If the geometry is already in the US National Atlas coordinate
+            system, the method may return the original object.
+        """
+        # If the geometry is in already in US National Atlas...
+        if self._sr == US_NAEA:
+            # ...there's nothing more to do.
+            return self
+        # Otherwise, just transform it.
+        return self.transform(sr=US_NAEA)
+
+    def as_wm(self) -> 'SrGeometry':
+        """
+        Get this geometry in the
+        `Web Mercator <https://en.wikipedia.org/wiki/Web_Mercator_projection>`_
+        coordinate system.
+
+        :return:  an equivalent geometry in the web mercator coordinate system
+            (or the original object if it is already in web mercator)
+
+        .. note::
+
+            If the geometry is already in the US National Atlas coordinate
+            system, the method may return the original object.
+        """
+        # If the geometry is in already in US National Atlas...
+        if self._sr == WEB_MERCATOR:
+            # ...there's nothing more to do.
+            return self
+        # Otherwise, just transform it.
+        return self.transform(sr=WEB_MERCATOR)
+
+    def as_metric(
+            self,
+            metric_projection: MetricProjections = None
+    ):
+        """
+        Get this geometry in one of the defined metric projections.
+
+        :param metric_projection: the preferred type of metric coordinate
+            system
+        :return: the geometry in one of the defined projections
+        :raises UnsupportedMetricProjectionException: if the `metric_projection`
+            argument is not supported
+        """
+        _mp = (
+            metric_projection if metric_projection is not None
+            else PREFERRED_METRIC_PROJECTION
+        )
+        if _mp == MetricProjections.US_NAEA:
+            return self.as_usm()
+        if _mp == MetricProjections.UTM:
+            return self.as_utm()
+        elif _mp == MetricProjections.WEB_MERCATOR:
+            return self.as_wm()
+        # This shouldn't happen unless we introduce a new standard metric
+        # projection without updating this method, but...
+        raise UnsupportedMetricProjectionException(metric_projection.name)
+
+    def transform(self, sr: Sr or int) -> 'SrGeometry':
         """
         Transform this geometry to
 
-        :param sr_: the target spatial reference
+        :param sr: the target spatial reference
         :return: an :py:class:`SrGeometry` in the target spatial reference
         """
         # Let's get the spatial reference (`Sr`): the caller may have given
         # us a ready-made one, but may also have just indicated the SRID.
         _sr = (
-            sr_ if isinstance(sr_, Sr)
-            else by_srid(srid=sr_)
+            sr if isinstance(sr, Sr)
+            else by_srid(srid=sr)
         )
         # If the target `Sr` is this geometry's spatial reference, just return
         # this geometry.
@@ -168,7 +251,8 @@ class SrGeometry(Exportable):
             self,
             n: int or float,
             units: Units = Units.METERS,
-            resolution: int = 64
+            resolution: int = 64,
+            metric_projection: MetricProjections = None
     ) -> 'SrPolygon':
         """
         Buffer the geometry by `n` meters.
@@ -177,10 +261,11 @@ class SrGeometry(Exportable):
         :param units: the radius distance units
         :param resolution: the number of segments used to approximate a quarter
             circle around a point
+        :param metric_projection: the preferred metric projection to use
         :return: the buffered geometry
         """
         # Get the geometry in a UTM coordinate system.
-        base_utm = self.as_utm()
+        base_utm = self.as_metric(metric_projection)
         # Buffer the base geometry.
         base_utm_buf = base_utm.base_geometry.buffer(
             distance=meters(n, units),
@@ -314,16 +399,18 @@ class SrGeometry1D(SrGeometry, ABC):
 
     def length(
             self,
-            units: Units = Units.METERS
+            units: Units = Units.METERS,
+            metric_projection: MetricProjections = None
     ) -> float:
         """
         Get the length of the polyline in the specified units.
 
         :param units: the units in which the length should be expressed
+        :param metric_projection: the preferred metric projection
         :return: the length
         """
         # Get the geometry in a UTM coordinate system.
-        _utm = self.as_utm()
+        _utm = self.as_metric(metric_projection)
         # Now that it's in a coordinate system measured in meters, we can
         # return the length with confidence.
         return convert(
@@ -344,16 +431,18 @@ class SrGeometry2D(SrGeometry, ABC):
     """
     def area(
             self,
-            units: Units = Units.METERS
+            units: Units = Units.METERS,
+            metric_projection: MetricProjections = None
     ) -> float:
         """
         Get the area of the polygon in the specified units (squared).
 
         :param units: the units in which the area should be expressed
+        :param metric_projection: the preferred metric projection
         :return: the area
         """
         # Get the geometry in a UTM coordinate system.
-        _utm = self.as_utm()
+        _utm = self.as_metric(metric_projection)
         # Now that it's in a coordinate system measured in meters, we can
         # return the area with confidence.
         return convert(
