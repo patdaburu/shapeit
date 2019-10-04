@@ -105,5 +105,3 @@ ENV/
 # JetBrains
 .idea
 
-# Generated README
-README.rst
