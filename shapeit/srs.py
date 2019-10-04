@@ -31,7 +31,7 @@ class InvalidSrException(ShapeitException):
 class UnsupportedMetricProjectionException(ShapeitException):
     """
     Raised in response to attempts to use a
-    :py:class:`metric projection <MetricProjections>`_ in a context that
+    :py:class:`metric projection <MetricProjections>` in a context that
     doesn't support it.
     """
 
