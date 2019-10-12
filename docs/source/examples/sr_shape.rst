@@ -30,6 +30,14 @@ The function will determine the best `SrGeometry` type by inspecting the Shapely
     print(f"geometry2 is a(n) {type(geometry2).__name__}.")
     print(f"The SRID is {geometry2.srid}.")
 
+.. code-block:: coq
+
+    geometry1 is a(n) SrPolyline.
+    The SRID is 4326.
+    geometry2 is a(n) SrPolygon.
+    The SRID is 32615.
+
+
 .. seealso::
 
     * :py:class:`SrPoint <shapeit.geometry.base.SrPoint>`
